@@ -126,16 +126,30 @@ namespace VectorLibrary
             return number < 0;
         }
 
-        private static bool ValidationIndexesForOperation(int minIndex, int maxIndex)
+        private static bool ValidationIndexesForOperation(ref int minIndex, ref int maxIndex)
         {
-            return (maxIndex - minIndex) > MIN_NUMBER_OF_ELEMENT;
+            bool flag = true;
+
+            if (Math.Abs(maxIndex - minIndex) > MIN_NUMBER_OF_ELEMENT)
+            {
+                if (minIndex > maxIndex)
+                {
+                    Swap(ref minIndex, ref maxIndex);
+                }
+            }
+            else
+            {
+                flag = false;
+            }
+
+            return flag;
         }
 
         private static double SumNegativeDoubleNumbers(double[] array, int minIndex, int maxIndex)
         {
             double sum = 0;
 
-            if (!ValidationIndexesForOperation(minIndex, maxIndex))
+            if (!ValidationIndexesForOperation(ref minIndex, ref maxIndex))
             {
                 return sum;
             }
@@ -153,7 +167,7 @@ namespace VectorLibrary
 
         private static double MulDoubleNumbers(double[] array, int minIndex, int maxIndex)
         {
-            if (!ValidationIndexesForOperation(minIndex, maxIndex))
+            if (!ValidationIndexesForOperation(ref minIndex, ref maxIndex))
             {
                 return 0;
             }
@@ -180,12 +194,6 @@ namespace VectorLibrary
         {
             int minIndex = FindIndexMinDoubleNumber(array);
             int maxIndex = FindIndexMaxDoubleNumber(array);
-
-            if (minIndex > maxIndex)
-            {
-                Swap(ref minIndex, ref maxIndex);
-            }
-
             return Math.Round(SumNegativeDoubleNumbers(array, minIndex, maxIndex), NUMBER_OF_ROUND);
         }
 
@@ -193,12 +201,6 @@ namespace VectorLibrary
         {
             int minIndex = FindIndexMinDoubleNumber(array);
             int maxIndex = FindIndexMaxDoubleNumber(array);
-
-            if (minIndex > maxIndex)
-            {
-                Swap(ref minIndex, ref maxIndex);
-            }
-
             return Math.Round(MulDoubleNumbers(array, minIndex, maxIndex), NUMBER_OF_ROUND);
         }
     }
