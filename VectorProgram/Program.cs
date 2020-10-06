@@ -1,4 +1,5 @@
-﻿using static VectorLibrary.Vector;
+﻿using System.ComponentModel.DataAnnotations;
+using static VectorLibrary.Vector;
 using System;
 
 namespace VectorProgram
@@ -7,12 +8,30 @@ namespace VectorProgram
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Task \"Array\"\n");
-
-            int size = GetIntNatural("Enter size array: ");
-            int[] array = GetArrayRandomFilledIntNatural(MIN_NATURAL_NUMBER, MAX_NATURAL_NUMBER, size);
-            ShowArray(array, "Array has form: ");
-
+            try
+            {
+                Console.WriteLine("Task \"Array with double numbers\"");
+                Console.WriteLine();
+                int size = GetInt("Enter size array: ");
+                double min = GetDouble("Enter min number to initialize (double): ");
+                double max = GetDouble("Enter max number to initialize (double): ");
+                double[] array = GetArrayDoubleRandomFilled(min, max, size);
+                Console.WriteLine();
+                ShowArrayDoubleIndexAndData(array);
+                Console.WriteLine();
+                Console.WriteLine("Sum of negative numbers between maximum and minimum numbers: "
+                                  + SumNegativeDoubleNumberBetweenMaxAndMin(array));
+                Console.WriteLine("Mul numbers between maximum and minimum numbers: "
+                                  + MulDoubleNumberBetweenMaxAndMin(array));
+            }
+            catch (ValidationException)
+            {
+                Console.WriteLine("\nError: ValidationException");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("\nError: FormatException");
+            }
         }
     }
 }

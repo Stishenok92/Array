@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
 
-
 namespace VectorLibrary
 {
     public class Vector
     {
-        public const int MIN_NATURAL_NUMBER = 1;
-        public const int MAX_NATURAL_NUMBER = 100;
+        private const int MIN_SIZE_ARRAY = 1;
+        private const int NUMBER_OF_ROUND = 2;
+        private const int MIN_NUMBER_OF_ELEMENT = 1;
 
         public static int GetInt(string msg)
         {
@@ -15,78 +15,63 @@ namespace VectorLibrary
             return int.Parse(Console.ReadLine());
         }
 
-        public static bool ValidationIntNatural(int size)
+        public static double GetDouble(string msg)
         {
-            return size >= MIN_NATURAL_NUMBER;
+            Console.Write(msg);
+            return double.Parse(Console.ReadLine());
         }
 
-        public static int GetIntNatural(string msg)
+        private static bool ValidationSizeArray(int size)
         {
-            int size = GetInt(msg);
-
-            if (!ValidationIntNatural(size))
-            {
-                throw new ValidationException();
-            }
-
-            return size;
+            return size >= MIN_SIZE_ARRAY;
         }
 
-        public static int[] GetArrayInt(int size)
-        {
-            if (!ValidationIntNatural(size))
-            {
-                throw new ValidationException();
-            }
-
-            return new int[size];
-        }
-
-        public static int InitIntRandom(int min, int max)
+        private static double InitDoubleRandom(double min, double max)
         {
             if (min > max)
             {
                 throw new ValidationException();
             }
-            
+
             Random random = new Random();
-            return random.Next(min, max + 1);
+            return Math.Round((random.NextDouble() * (max - min) + min), NUMBER_OF_ROUND);
+            ;
         }
 
-        public static void InitArrayIntRandom(int min, int max, ref int[] array)
+        private static void InitArrayDoubleRandom(double min, double max, ref double[] array)
         {
             if (min > max)
             {
                 throw new ValidationException();
             }
-            
+
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = InitIntRandom(min, max);
+                array[i] = InitDoubleRandom(min, max);
             }
         }
 
-        public static int[] GetArrayRandomFilledIntNatural(int min, int max, int size)
+        public static double[] GetArrayDoubleRandomFilled(double min, double max, int size)
         {
-            if (!ValidationIntNatural(size) || min > max)
+            if (!ValidationSizeArray(size) || min > max)
             {
                 throw new ValidationException();
             }
-            
-            int[] temp = new int[size]; 
-            InitArrayIntRandom(min, max, ref temp);
+
+            double[] temp = new double[size];
+            InitArrayDoubleRandom(min, max, ref temp);
             return temp;
         }
 
-        public static void ShowArrayIndex(int[] array)
+        private static void ShowArrayIndex(int size)
         {
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < size; i++)
             {
                 Console.Write("[" + i + "]" + "\t");
             }
         }
-        
-        public static void ShowArrayData(int[] array)
+
+        private static void ShowArrayDoubleData(double[] array)
         {
             foreach (var t in array)
             {
@@ -94,12 +79,127 @@ namespace VectorLibrary
             }
         }
 
-        public static void ShowArray(int[] array, string msg)
+        public static void ShowArrayDoubleIndexAndData(double[] array)
         {
-            Console.WriteLine(msg);
-            ShowArrayIndex(array);
+            ShowArrayIndex(array.Length);
             Console.WriteLine();
-            ShowArrayData(array);
+            ShowArrayDoubleData(array);
+            Console.WriteLine();
+        }
+
+        private static int FindIndexMinDoubleNumber(double[] array)
+        {
+            int index = 0;
+            double number = array[0];
+
+            for (int i = 1; i < array.Length; i++)
+            {
+                if (array[i] < number)
+                {
+                    index = i;
+                    number = array[i];
+                }
+            }
+
+            return index;
+        }
+
+        private static int FindIndexMaxDoubleNumber(double[] array)
+        {
+            int index = 0;
+            double number = array[0];
+
+            for (int i = 1; i < array.Length; i++)
+            {
+                if (array[i] > number)
+                {
+                    index = i;
+                    number = array[i];
+                }
+            }
+
+            return index;
+        }
+
+        private static bool IsNegativeDoubleNumber(double number)
+        {
+            return number < 0;
+        }
+
+        private static bool ValidationIndexesForOperation(int minIndex, int maxIndex)
+        {
+            return (maxIndex - minIndex) > MIN_NUMBER_OF_ELEMENT;
+        }
+
+        private static double SumNegativeDoubleNumbers(double[] array, int minIndex, int maxIndex)
+        {
+            double sum = 0;
+
+            if (!ValidationIndexesForOperation(minIndex, maxIndex))
+            {
+                return sum;
+            }
+
+            for (int i = ++minIndex; i < maxIndex; i++)
+            {
+                if (IsNegativeDoubleNumber(array[i]))
+                {
+                    sum += array[i];
+                }
+            }
+
+            return sum;
+        }
+
+        private static double MulDoubleNumbers(double[] array, int minIndex, int maxIndex)
+        {
+            if (!ValidationIndexesForOperation(minIndex, maxIndex))
+            {
+                return 0;
+            }
+
+            double mul = 1;
+
+            for (int i = minIndex + 1; i < maxIndex; i++)
+            {
+                mul *= array[i];
+            }
+
+            return mul;
+        }
+
+        private static void Swap(ref int a, ref int b)
+        {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+
+
+        public static double SumNegativeDoubleNumberBetweenMaxAndMin(double[] array)
+        {
+            int minIndex = FindIndexMinDoubleNumber(array);
+            int maxIndex = FindIndexMaxDoubleNumber(array);
+
+            if (minIndex > maxIndex)
+            {
+                Swap(ref minIndex, ref maxIndex);
+            }
+
+            return Math.Round(SumNegativeDoubleNumbers(array, minIndex, maxIndex), NUMBER_OF_ROUND);
+        }
+
+        public static double MulDoubleNumberBetweenMaxAndMin(double[] array)
+        {
+            int minIndex = FindIndexMinDoubleNumber(array);
+            int maxIndex = FindIndexMaxDoubleNumber(array);
+
+            if (minIndex > maxIndex)
+            {
+                Swap(ref minIndex, ref maxIndex);
+            }
+
+            return Math.Round(MulDoubleNumbers(array, minIndex, maxIndex), NUMBER_OF_ROUND);
         }
     }
 }
